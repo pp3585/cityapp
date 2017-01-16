@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">CityApp</string>
+    <string name="news">News</string>
+    <string name="title_activity_news_list">NewsListActivity</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="action_language">हिन्दी</string>
+    <string name="no_data_available">No data available.</string>
+</resources>
