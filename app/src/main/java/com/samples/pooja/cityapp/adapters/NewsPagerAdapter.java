@@ -5,9 +5,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.samples.pooja.cityapp.fragments.NewsListFragment;
+import com.samples.pooja.cityapp.utilities.NewsPageConstants;
 
 /**
- * Returns a fragment corresponding to one of the tabs.
+ * Returns a fragment for each of the tabs.
  */
 public class NewsPagerAdapter extends FragmentPagerAdapter {
 
@@ -22,22 +23,21 @@ public class NewsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        // Show 4 total pages.
-        return 4;
+        // Returns the number of fragments based on the number of tabs.
+        return NewsPageConstants.TAB_NUM;
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
+        String sTabName;
         switch (position) {
             case 0:
-                return "NATIONAL NEWS(EN)";
+            default:
+                sTabName = NewsPageConstants.STR_TAB_1;
+                break;
             case 1:
-                return "NATIONAL NEWS(HI)";
-            case 2:
-                return "CITY NEWS(EN)";
-            case 3:
-                return "CITY NEWS(HI)";
+                sTabName = NewsPageConstants.STR_TAB_2;
         }
-        return null;
+        return sTabName;
     }
 }

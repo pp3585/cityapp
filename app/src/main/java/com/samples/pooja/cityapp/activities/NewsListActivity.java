@@ -9,7 +9,9 @@ import android.support.v7.widget.Toolbar;
 import com.samples.pooja.cityapp.R;
 import com.samples.pooja.cityapp.adapters.NewsPagerAdapter;
 
-
+/*
+* This activity displays the news list with tabs for national and city news.
+*/
 public class NewsListActivity extends AppCompatActivity {
 
     private NewsPagerAdapter mNewsPagerAdapter;
@@ -20,13 +22,14 @@ public class NewsListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news_list);
 
+        //TO DO : Toolbar contains the language toggle button
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        // Create the adapter that will return a fragment for each of the four
+
+        // Create the adapter that will return a fragment for each of the two
         // tabs of the activity.
         mNewsPagerAdapter = new NewsPagerAdapter(getSupportFragmentManager());
-
-        // Set up the ViewPager with the tabs adapter.
+        // Set up the ViewPager with the adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mNewsPagerAdapter);
 

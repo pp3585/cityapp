@@ -3,6 +3,7 @@ package com.samples.pooja.cityapp.fragments;
 import android.app.Dialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,7 +31,10 @@ public class NewsListFragment extends ListFragment implements AdapterView.OnItem
 
     private static final String KEY_TAB_TYPE = "tab_position_number";
     private Dialog pDialog;
-    private static String sNewsUrl;
+    //private static String sNewsUrl;
+    private static int mNewsLocation;
+    //private static String mNewsLanguage;
+    private NewsListFragment mNewsListFragment;
 
     public NewsListFragment() {
 
@@ -41,18 +45,13 @@ public class NewsListFragment extends ListFragment implements AdapterView.OnItem
      * number.
      */
     public static NewsListFragment newInstance(int tabPosition) {
-        NewsListFragment fragment = new NewsListFragment();
         switch(tabPosition) {
             case 0:
-                sNewsUrl = NewsPageConstants.NATL_EN_URL;
+                mNewsLocation = NewsPageConstants.LOC_CODE_NATIONAL;
             case 1:
-                sNewsUrl = NewsPageConstants.NATL_HI_URL;
-            case 2:
-                sNewsUrl = NewsPageConstants.CITY_EN_URL;
-            case 3:
-                sNewsUrl = NewsPageConstants.CITY_HI_URL;
+                mNewsLocation = NewsPageConstants.LOC_CODE_CITY;
         }
-        return fragment;
+        return new NewsListFragment();
     }
 
     @Override
@@ -85,7 +84,7 @@ public class NewsListFragment extends ListFragment implements AdapterView.OnItem
             String jsonReply;
             Boolean success = false;
             try {
-                URL url = new URL(sNewsUrl);
+                URL url = new URL(NewsPageConstants.NATL_EN_URL);
                 httpURLConnection = (HttpURLConnection) url.openConnection();
                 httpURLConnection.setRequestMethod("GET");
                 httpURLConnection.setRequestProperty("Content-length", "0");
