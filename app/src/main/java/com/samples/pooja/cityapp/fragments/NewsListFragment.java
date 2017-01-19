@@ -98,7 +98,7 @@ public class NewsListFragment extends ListFragment implements AdapterView.OnItem
                 switch (status) {
                     case 200:
                     case 201:
-                        success = true;
+                          success = true;
                         InputStream response = httpURLConnection.getInputStream();
                         jsonReply = convertStreamToString(response);
                         return jsonReply;

@@ -3,8 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.samples.pooja.cityapp.activities.NewsListActivity">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_language"
         android:orderInCategory="100"
-        android:title="@string/action_language"
-        app:showAsAction="never" />
+        android:title="@string/action_language_hi"
+        app:showAsAction="ifRoom" />
+
 </menu>
