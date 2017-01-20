@@ -10,8 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import com.samples.pooja.cityapp.R;
+import com.samples.pooja.cityapp.adapters.NewsListAdapter;
 import com.samples.pooja.cityapp.utilities.NewsPageConstants;
 
 import java.io.BufferedReader;
@@ -35,6 +37,29 @@ public class NewsListFragment extends ListFragment implements AdapterView.OnItem
     private static int mNewsLocation;
     //private static String mNewsLanguage;
     private NewsListFragment mNewsListFragment;
+    /**/
+    ListView list;
+    String[] itemname ={
+            "Safari",
+            "Camera",
+            "Global",
+            "FireFox",
+            "UC Browser",
+            "Android Folder",
+            "VLC Player",
+            "Cold War"
+    };
+
+    Integer[] imgid={
+            android.R.drawable.ic_menu_call,
+            android.R.drawable.ic_menu_add,
+            android.R.drawable.ic_menu_call,
+            android.R.drawable.ic_menu_add,
+            android.R.drawable.ic_menu_call,
+            android.R.drawable.ic_menu_add,
+            android.R.drawable.ic_menu_call,
+            android.R.drawable.ic_menu_add,
+    };
 
     public NewsListFragment() {
 
@@ -63,12 +88,13 @@ public class NewsListFragment extends ListFragment implements AdapterView.OnItem
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        NewsListAdapter adapter=new NewsListAdapter(getActivity(), itemname, imgid);
+        setListAdapter(adapter);
 
-
-        String[] strings = {"A", "B", "C", "D"};
+        /*String[] strings = {"A", "B", "C", "D"};
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, strings);
         setListAdapter(arrayAdapter);
-        getListView().setOnItemClickListener(this);
+        getListView().setOnItemClickListener(this);*/
     }
 
 
