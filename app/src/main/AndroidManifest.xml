@@ -24,6 +24,12 @@
             android:parentActivityName=".activities.MainActivity"
             android:label="@string/title_activity_news_list"
             android:theme="@style/AppTheme.NoActionBar"/>
+
+        <activity
+            android:name=".activities.NewsDetailActivity"
+            android:parentActivityName=".activities.NewsListActivity"
+            android:label="@string/title_activity_news_list"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

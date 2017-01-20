@@ -1,6 +1,7 @@
 package com.samples.pooja.cityapp.fragments;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,8 +12,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.samples.pooja.cityapp.R;
+import com.samples.pooja.cityapp.activities.NewsDetailActivity;
 import com.samples.pooja.cityapp.adapters.NewsListAdapter;
 import com.samples.pooja.cityapp.utilities.NewsPageConstants;
 
@@ -29,7 +32,7 @@ import java.util.logging.Logger;
 /**
  * This fragment displays the news feed and is reused for every tab.
  */
-public class NewsListFragment extends ListFragment implements AdapterView.OnItemClickListener {
+public class NewsListFragment extends ListFragment {
 
     private static final String KEY_TAB_TYPE = "tab_position_number";
     private Dialog pDialog;
@@ -90,17 +93,18 @@ public class NewsListFragment extends ListFragment implements AdapterView.OnItem
         super.onActivityCreated(savedInstanceState);
         NewsListAdapter adapter=new NewsListAdapter(getActivity(), itemname, imgid);
         setListAdapter(adapter);
-
-        /*String[] strings = {"A", "B", "C", "D"};
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, strings);
-        setListAdapter(arrayAdapter);
-        getListView().setOnItemClickListener(this);*/
     }
 
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        Intent intent = new Intent(getActivity(), NewsDetailActivity.class);
+        startActivity(intent);//TO do - ask activity to do the page change
+    }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+    public void onResume() {
+        super.onResume();
+        Toast.makeText(getActivity(), "onResume", Toast.LENGTH_SHORT).show();
     }
 
     private class HttpAsyncTask extends AsyncTask<String, Void, Object> {
