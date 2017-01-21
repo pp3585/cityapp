@@ -14,6 +14,9 @@ import com.samples.pooja.cityapp.R;
 import com.samples.pooja.cityapp.activities.NewsListActivity;
 import com.samples.pooja.cityapp.adapters.NewsListAdapter;
 import com.samples.pooja.cityapp.utilities.NewsPageConstants;
+import com.samples.pooja.cityapp.webhandlers.NewsItem;
+
+import java.util.List;
 
 /**
  * This fragment displays the news feed and is reused for every tab.
@@ -83,8 +86,8 @@ public class NewsListFragment extends ListFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        NewsListAdapter adapter = new NewsListAdapter(getActivity(), itemname, imgid);
-        setListAdapter(adapter);
+        /*NewsListAdapter adapter = new NewsListAdapter(getActivity(), itemname, imgid);//Place these after download
+        setListAdapter(adapter);*/
         //News type for the fragment is decided based on tabposition during initialization and
         //stored in the field mNewsLocation
         //Get current selected language
@@ -92,22 +95,22 @@ public class NewsListFragment extends ListFragment {
         //Get URL based on news type and language
         String sNewsUrl = getNewsUrl(langCode, mNewsLocation);
         //Load data on creation
-        mNewsListActivity.onNewsListStartDownload(sNewsUrl, mNewsLocation);//Is 2nd param reqd??No i think
+        mNewsListActivity.onNewsListStartDownload(sNewsUrl);
     }
 
     private String getNewsUrl(int langCode, int mNewsLocation) {
         String sUrl;
         if(langCode == NewsPageConstants.LANG_CODE_EN) {
             if(mNewsLocation == NewsPageConstants.LOC_CODE_NATIONAL){
-                sUrl = "national en url";
+                sUrl = NewsPageConstants.NATL_EN_URL;
             } else {
-                sUrl = "city en url";
+                sUrl = NewsPageConstants.CITY_EN_URL;
             }
         } else {
             if(mNewsLocation == NewsPageConstants.LOC_CODE_NATIONAL){
-                sUrl = "national hi url";
+                sUrl = NewsPageConstants.NATL_HI_URL;
             } else {
-                sUrl = "city hi url";
+                sUrl = NewsPageConstants.CITY_HI_URL;
             }
         }
         return sUrl;
@@ -130,70 +133,8 @@ public class NewsListFragment extends ListFragment {
         mNewsListActivity.onNewsItemSelected(position, null, NewsPageConstants.LOC_CODE_NATIONAL);
     }
 
-    /*private class HttpAsyncTask extends AsyncTask<String, Void, Object> {
-        @Override
-        protected String doInBackground(String... urls) {
-            HttpURLConnection httpURLConnection = null;
-            String jsonReply;
-            Boolean success = false;
-            try {
-                URL url = new URL(NewsPageConstants.NATL_EN_URL);
-                httpURLConnection = (HttpURLConnection) url.openConnection();
-                httpURLConnection.setRequestMethod("GET");
-                httpURLConnection.setRequestProperty("Content-length", "0");
-                httpURLConnection.setUseCaches(false);
-                httpURLConnection.setAllowUserInteraction(false);
-                httpURLConnection.setConnectTimeout(1000);
-                httpURLConnection.setReadTimeout(1000);
-                httpURLConnection.connect();
-                int status = httpURLConnection.getResponseCode();
-
-                switch (status) {
-                    case 200:
-                    case 201:
-                          success = true;
-                        InputStream response = httpURLConnection.getInputStream();
-                        jsonReply = convertStreamToString(response);
-                        return jsonReply;
-                }
-
-            } catch (MalformedURLException ex) {
-                Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
-            } finally {
-                if (httpURLConnection != null) {
-                    try {
-                        httpURLConnection.disconnect();
-                    } catch (Exception ex) {
-                        Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            }
-            return null;
-
-        }
-
-        private String convertStreamToString(InputStream is) {
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-            StringBuilder sb = new StringBuilder();
-
-            String line;
-            try {
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line + "\n");
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            return sb.toString();
-        }
-    }*/
+    public void onDownloadComplete(List<NewsItem> result) {
+        NewsListAdapter adapter = new NewsListAdapter(getActivity(), itemname, imgid);//Place these after download
+        setListAdapter(adapter);
+    }
 }

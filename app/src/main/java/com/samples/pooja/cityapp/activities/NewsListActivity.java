@@ -3,6 +3,8 @@ package com.samples.pooja.cityapp.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
@@ -15,15 +17,29 @@ import android.view.MenuItem;
 
 import com.samples.pooja.cityapp.R;
 import com.samples.pooja.cityapp.adapters.NewsPagerAdapter;
+import com.samples.pooja.cityapp.fragments.NetworkFragment;
+import com.samples.pooja.cityapp.fragments.NewsListFragment;
 import com.samples.pooja.cityapp.listeners.NewsListChangesListener;
+import com.samples.pooja.cityapp.webhandlers.DownloadCallback;
+import com.samples.pooja.cityapp.webhandlers.NewsItem;
+
+import org.json.JSONObject;
+
+import java.util.List;
 
 /*
 * This activity displays the news list with tabs for national and city news.
 */
-public class NewsListActivity extends AppCompatActivity implements NewsListChangesListener {
+public class NewsListActivity extends AppCompatActivity implements NewsListChangesListener, DownloadCallback {
 
     private NewsPagerAdapter mNewsPagerAdapter;
     private ViewPager mViewPager;
+    // Keep a reference to the NetworkFragment, which owns the AsyncTask object
+    // that is used to execute network ops.
+    private NetworkFragment mNetworkFragment;
+    // Boolean telling us whether a download is in progress, so we don't trigger overlapping
+    // downloads with consecutive button clicks.
+    private boolean mDownloading = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +63,16 @@ public class NewsListActivity extends AppCompatActivity implements NewsListChang
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+
+        mNetworkFragment = NetworkFragment.getInstance(getSupportFragmentManager());
+    }
+
+    private void startDownload(String url) {
+        if (!mDownloading && mNetworkFragment != null) {
+            // Execute the async download.
+            mNetworkFragment.startDownload(url);
+            mDownloading = true;
+        }
     }
 
     private void setDefaultNewsLanguage() {
@@ -103,15 +129,10 @@ public class NewsListActivity extends AppCompatActivity implements NewsListChang
     }
 
     @Override
-    public void onNewsListStartDownload(String sWebUrl, int newsType) {
+    public void onNewsListStartDownload(String sWebUrl) {
         //Call API to load data
-        //Pass result to appropriate fragment
-        Fragment page = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.container + ":" + mViewPager.getCurrentItem());
-        if(mViewPager.getCurrentItem() == 0 && page != null){
-            //Fragment national - call method to pass result data
-        } else if(page != null){
-            //Fragment city - call method to pass result data
-        }
+        startDownload(sWebUrl);
+
     }
 
     @Override
@@ -126,4 +147,50 @@ public class NewsListActivity extends AppCompatActivity implements NewsListChang
         //Reload data
     }
 
+    @Override
+    public void updateFromDownload(Object result) {
+        // Update your UI here based on result of download.
+        //Pass result to appropriate fragment
+        Fragment page = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.container + ":" + mViewPager.getCurrentItem());
+        ((NewsListFragment)page).onDownloadComplete((List<NewsItem>) result);//don't think sepaate calls are required for each fragment
+        if(mViewPager.getCurrentItem() == 0 && page != null){
+            //Fragment national - call method to pass result data
+
+        } else if(page != null){
+            //Fragment city - call method to pass result data
+        }
+
+    }
+
+    @Override
+    public NetworkInfo getActiveNetworkInfo() {
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        return connectivityManager.getActiveNetworkInfo();
+    }
+
+    @Override
+    public void onProgressUpdate(int progressCode, int percentComplete) {
+        switch(progressCode) {
+            // You can add UI behavior for progress updates here.
+            case Progress.ERROR:
+                break;
+            case Progress.CONNECT_SUCCESS:
+                break;
+            case Progress.GET_INPUT_STREAM_SUCCESS:
+                break;
+            case Progress.PROCESS_INPUT_STREAM_IN_PROGRESS:
+                break;
+            case Progress.PROCESS_INPUT_STREAM_SUCCESS:
+                break;
+        }
+    }
+
+    @Override
+    public void finishDownloading() {
+        mDownloading = false;
+        if (mNetworkFragment != null) {
+            mNetworkFragment.cancelDownload();
+        }
+    }
 }
