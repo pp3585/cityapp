@@ -1,10 +1,12 @@
 package com.samples.pooja.cityapp.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -13,11 +15,12 @@ import android.view.MenuItem;
 
 import com.samples.pooja.cityapp.R;
 import com.samples.pooja.cityapp.adapters.NewsPagerAdapter;
+import com.samples.pooja.cityapp.listeners.NewsListChangesListener;
 
 /*
 * This activity displays the news list with tabs for national and city news.
 */
-public class NewsListActivity extends AppCompatActivity {
+public class NewsListActivity extends AppCompatActivity implements NewsListChangesListener {
 
     private NewsPagerAdapter mNewsPagerAdapter;
     private ViewPager mViewPager;
@@ -94,9 +97,33 @@ public class NewsListActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private boolean getEnLanguageState() {
+    public boolean getEnLanguageState() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         return sharedPref.getBoolean(getString(R.string.key_is_language_eng), true);
+    }
+
+    @Override
+    public void onNewsListStartDownload(String sWebUrl, int newsType) {
+        //Call API to load data
+        //Pass result to appropriate fragment
+        Fragment page = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.container + ":" + mViewPager.getCurrentItem());
+        if(mViewPager.getCurrentItem() == 0 && page != null){
+            //Fragment national - call method to pass result data
+        } else if(page != null){
+            //Fragment city - call method to pass result data
+        }
+    }
+
+    @Override
+    public void onNewsItemSelected(int position, String sDetailUrl, int newsType) {
+        //Call detail screen
+        Intent intent = new Intent(this, NewsDetailActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onNewsListRefresh(String sWebUrl, int newsType) {
+        //Reload data
     }
 
 }

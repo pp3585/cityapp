@@ -1,33 +1,19 @@
 package com.samples.pooja.cityapp.fragments;
 
 import android.app.Dialog;
-import android.content.Intent;
-import android.os.AsyncTask;
+import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.samples.pooja.cityapp.R;
-import com.samples.pooja.cityapp.activities.NewsDetailActivity;
+import com.samples.pooja.cityapp.activities.NewsListActivity;
 import com.samples.pooja.cityapp.adapters.NewsListAdapter;
 import com.samples.pooja.cityapp.utilities.NewsPageConstants;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * This fragment displays the news feed and is reused for every tab.
@@ -36,21 +22,21 @@ public class NewsListFragment extends ListFragment {
 
     private static final String KEY_TAB_TYPE = "tab_position_number";
     private Dialog pDialog;
-    //private static String sNewsUrl;
+    //private String mNewsUrl;
     private static int mNewsLocation;
     //private static String mNewsLanguage;
     private NewsListFragment mNewsListFragment;
-    /**/
-    ListView list;
+    private NewsListActivity mNewsListActivity;
+
     String[] itemname ={
-            "Safari",
-            "Camera",
+            "How To Drive Safely When No One else Is.",
+            "How To Drive Safely When No One else Is.",
             "Global",
-            "FireFox",
-            "UC Browser",
-            "Android Folder",
+            "How To Drive Safely When No One else Is.",
+            "How To Drive Safely When No One else Is.",
+            "How To Drive Safely When No One else Is.",
             "VLC Player",
-            "Cold War"
+            "How To Drive Safely When No One else Is."
     };
 
     Integer[] imgid={
@@ -83,6 +69,12 @@ public class NewsListFragment extends ListFragment {
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mNewsListActivity = (NewsListActivity) context;
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
          return inflater.inflate(R.layout.fragment_news_list, container, false);
@@ -91,23 +83,54 @@ public class NewsListFragment extends ListFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        NewsListAdapter adapter=new NewsListAdapter(getActivity(), itemname, imgid);
+        NewsListAdapter adapter = new NewsListAdapter(getActivity(), itemname, imgid);
         setListAdapter(adapter);
+        //News type for the fragment is decided based on tabposition during initialization and
+        //stored in the field mNewsLocation
+        //Get current selected language
+        int langCode = getCurrentLanguage();
+        //Get URL based on news type and language
+        String sNewsUrl = getNewsUrl(langCode, mNewsLocation);
+        //Load data on creation
+        mNewsListActivity.onNewsListStartDownload(sNewsUrl, mNewsLocation);//Is 2nd param reqd??No i think
+    }
+
+    private String getNewsUrl(int langCode, int mNewsLocation) {
+        String sUrl;
+        if(langCode == NewsPageConstants.LANG_CODE_EN) {
+            if(mNewsLocation == NewsPageConstants.LOC_CODE_NATIONAL){
+                sUrl = "national en url";
+            } else {
+                sUrl = "city en url";
+            }
+        } else {
+            if(mNewsLocation == NewsPageConstants.LOC_CODE_NATIONAL){
+                sUrl = "national hi url";
+            } else {
+                sUrl = "city hi url";
+            }
+        }
+        return sUrl;
+    }
+
+    private int getCurrentLanguage() {
+        int langCode;
+        boolean langIsEn = mNewsListActivity.getEnLanguageState();
+        if(langIsEn){
+            langCode = NewsPageConstants.LANG_CODE_EN;
+        } else {
+            langCode = NewsPageConstants.LANG_CODE_HI;
+        }
+        return langCode;
     }
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        Intent intent = new Intent(getActivity(), NewsDetailActivity.class);
-        startActivity(intent);//TO do - ask activity to do the page change
+        //TO DO - Form url for detail page and find the current tab and pass to below line of code
+        mNewsListActivity.onNewsItemSelected(position, null, NewsPageConstants.LOC_CODE_NATIONAL);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Toast.makeText(getActivity(), "onResume", Toast.LENGTH_SHORT).show();
-    }
-
-    private class HttpAsyncTask extends AsyncTask<String, Void, Object> {
+    /*private class HttpAsyncTask extends AsyncTask<String, Void, Object> {
         @Override
         protected String doInBackground(String... urls) {
             HttpURLConnection httpURLConnection = null;
@@ -172,5 +195,5 @@ public class NewsListFragment extends ListFragment {
             }
             return sb.toString();
         }
-    }
+    }*/
 }
