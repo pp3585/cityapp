@@ -25,10 +25,8 @@ public class NewsListFragment extends ListFragment {
 
     private static final String KEY_TAB_TYPE = "tab_position_number";
     private Dialog pDialog;
-    //private String mNewsUrl;
     private static int mNewsLocation;
-    //private static String mNewsLanguage;
-    private NewsListFragment mNewsListFragment;
+    private NewsListAdapter mNewsListAdapter;
     private NewsListActivity mNewsListActivity;
 
     String[] itemname ={
@@ -65,8 +63,10 @@ public class NewsListFragment extends ListFragment {
         switch(tabPosition) {
             case 0:
                 mNewsLocation = NewsPageConstants.LOC_CODE_NATIONAL;
+                break;
             case 1:
                 mNewsLocation = NewsPageConstants.LOC_CODE_CITY;
+                break;
         }
         return new NewsListFragment();
     }
@@ -83,19 +83,18 @@ public class NewsListFragment extends ListFragment {
          return inflater.inflate(R.layout.fragment_news_list, container, false);
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        /*NewsListAdapter adapter = new NewsListAdapter(getActivity(), itemname, imgid);//Place these after download
-        setListAdapter(adapter);*/
-        //News type for the fragment is decided based on tabposition during initialization and
-        //stored in the field mNewsLocation
-        //Get current selected language
-        int langCode = getCurrentLanguage();
-        //Get URL based on news type and language
-        String sNewsUrl = getNewsUrl(langCode, mNewsLocation);
-        //Load data on creation
-        mNewsListActivity.onNewsListStartDownload(sNewsUrl);
+    public void loadData(){
+        //Check if data is already loaded
+        if(mNewsListAdapter == null || mNewsListAdapter.isEmpty()) {
+            //News type for the fragment is decided based on tabposition during initialization and
+            //stored in the field mNewsLocation
+            //Get current selected language
+            int langCode = getCurrentLanguage();
+            //Get URL based on news type and language
+            String sNewsUrl = getNewsUrl(langCode, mNewsLocation);
+            //Load data on creation
+            mNewsListActivity.onNewsListStartDownload(sNewsUrl);
+        }
     }
 
     private String getNewsUrl(int langCode, int mNewsLocation) {
@@ -134,7 +133,13 @@ public class NewsListFragment extends ListFragment {
     }
 
     public void onDownloadComplete(List<NewsItem> result) {
-        NewsListAdapter adapter = new NewsListAdapter(getActivity(), itemname, imgid);//Place these after download
-        setListAdapter(adapter);
+        mNewsListAdapter = new NewsListAdapter(getActivity(), itemname, imgid);//Place these after download
+        setListAdapter(mNewsListAdapter);
+    }
+
+    public void onDownloadError(Exception exception) {
+        //Create error text based on exceotion
+        //Load empty view text with the error text
+        Toast.makeText(mNewsListActivity, exception.getMessage(), Toast.LENGTH_LONG).show();//Need to make better texts and dialogs
     }
 }

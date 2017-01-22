@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.samples.pooja.cityapp.R;
 import com.samples.pooja.cityapp.adapters.NewsPagerAdapter;
@@ -21,6 +22,7 @@ import com.samples.pooja.cityapp.fragments.NetworkFragment;
 import com.samples.pooja.cityapp.fragments.NewsListFragment;
 import com.samples.pooja.cityapp.listeners.NewsListChangesListener;
 import com.samples.pooja.cityapp.webhandlers.DownloadCallback;
+import com.samples.pooja.cityapp.webhandlers.DownloadTask;
 import com.samples.pooja.cityapp.webhandlers.NewsItem;
 
 import org.json.JSONObject;
@@ -30,7 +32,7 @@ import java.util.List;
 /*
 * This activity displays the news list with tabs for national and city news.
 */
-public class NewsListActivity extends AppCompatActivity implements NewsListChangesListener, DownloadCallback {
+public class NewsListActivity extends AppCompatActivity implements NewsListChangesListener, DownloadCallback, ViewPager.OnPageChangeListener {
 
     private NewsPagerAdapter mNewsPagerAdapter;
     private ViewPager mViewPager;
@@ -60,6 +62,7 @@ public class NewsListActivity extends AppCompatActivity implements NewsListChang
         // Set up the ViewPager with the adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mNewsPagerAdapter);
+        mViewPager.addOnPageChangeListener(this);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
@@ -68,7 +71,7 @@ public class NewsListActivity extends AppCompatActivity implements NewsListChang
     }
 
     private void startDownload(String url) {
-        if (!mDownloading && mNetworkFragment != null) {
+        if (/*!mDownloading && */mNetworkFragment != null) {
             // Execute the async download.
             mNetworkFragment.startDownload(url);
             mDownloading = true;
@@ -147,19 +150,36 @@ public class NewsListActivity extends AppCompatActivity implements NewsListChang
         //Reload data
     }
 
+    /*
+    * Called when a fragment is selected by swiping.
+    */
+    @Override
+    public void onFragmentSelected(int position) {
+        //Get current fragment
+        Fragment page = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.container + ":" + position);
+        if(page != null){
+            ((NewsListFragment)page).loadData();
+        }
+    }
+
+    /*
+     * Updates UI based on result of download.
+     */
     @Override
     public void updateFromDownload(Object result) {
-        // Update your UI here based on result of download.
-        //Pass result to appropriate fragment
+        DownloadTask.Result finalResult = (DownloadTask.Result)result;
         Fragment page = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.container + ":" + mViewPager.getCurrentItem());
-        ((NewsListFragment)page).onDownloadComplete((List<NewsItem>) result);//don't think sepaate calls are required for each fragment
-        if(mViewPager.getCurrentItem() == 0 && page != null){
-            //Fragment national - call method to pass result data
-
-        } else if(page != null){
-            //Fragment city - call method to pass result data
+        //Check for exceptions
+        if (finalResult.mException != null) {//Move Result to separate file
+            if (page != null) {
+                ((NewsListFragment) page).onDownloadError(finalResult.mException);
+            }
+        } else if (finalResult.mResultObject != null) {
+            //Pass result to appropriate fragment
+            if (page != null) {
+                ((NewsListFragment) page).onDownloadComplete((List<NewsItem>) finalResult.mResultObject);
+            }
         }
-
     }
 
     @Override
@@ -192,5 +212,20 @@ public class NewsListActivity extends AppCompatActivity implements NewsListChang
         if (mNetworkFragment != null) {
             mNetworkFragment.cancelDownload();
         }
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        this.onFragmentSelected(position);
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
     }
 }

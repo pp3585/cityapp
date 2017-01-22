@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -36,14 +37,18 @@ public class DownloadTask extends AsyncTask<String, Void, DownloadTask.Result> {
      * task has completed, either the result value or exception can be a non-null value.
      * This allows you to pass exceptions to the UI thread that were thrown during doInBackground().
      */
-    class Result {
+    public class Result {
         public String mResultValue;
         public Exception mException;
+        public Object mResultObject;
         public Result(String resultValue) {
             mResultValue = resultValue;
         }
         public Result(Exception exception) {
             mException = exception;
+        }
+        public void setResultObject(Object object){
+            mResultObject = object;
         }
     }
 
@@ -93,8 +98,20 @@ public class DownloadTask extends AsyncTask<String, Void, DownloadTask.Result> {
     @Override
     protected void onPostExecute(Result result) {
         if (result != null && mCallback != null) {
-            if (result.mException != null) {
-                mCallback.updateFromDownload(result.mException.getMessage());
+            if (result.mResultValue != null) {
+                //Parse result value
+                List<NewsItem> newsItemList = null;
+                try {
+                    NewsParser newsParser = new NewsParser();
+                    newsItemList = newsParser.parseJsonNewsList(result.mResultValue);
+                    result.setResultObject(newsItemList);
+                } catch (JSONException e) {
+                    result = new Result(e);
+                }
+            }
+            mCallback.updateFromDownload(result);//add list if available to result object and send to UI in err n success cases
+            /*if (result.mException != null) {//no need of this condition
+                mCallback.updateFromDownload(result.mException.getMessage());//remove this
             } else if (result.mResultValue != null) {
                 //Parse result value
                 List<NewsItem> newsItemList = null;
@@ -105,8 +122,8 @@ public class DownloadTask extends AsyncTask<String, Void, DownloadTask.Result> {
                     result = new Result(e);
                 }
 
-                mCallback.updateFromDownload(newsItemList);
-            }
+                mCallback.updateFromDownload(newsItemList);//add list if available to result object and send to UI in err n success cases
+            }*/
             mCallback.finishDownloading();
         }
     }
@@ -170,8 +187,16 @@ public class DownloadTask extends AsyncTask<String, Void, DownloadTask.Result> {
     private String readStream(InputStream stream, int maxLength) throws IOException {
         String result = null;
         // Read InputStream using the UTF-8 charset.
-        InputStreamReader reader = new InputStreamReader(stream, "UTF-8");
-        // Create temporary buffer to hold Stream data with specified max length.
+        InputStreamReader reader = new InputStreamReader(stream);
+        BufferedReader br = new BufferedReader(reader);
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while ((line = br.readLine()) != null) {
+            sb.append(line+"\n");
+        }
+        br.close();
+        return sb.toString();
+        /*// Create temporary buffer to hold Stream data with specified max length.
         char[] buffer = new char[maxLength];
         // Populate temporary buffer with Stream data.
         int numChars = 0;
@@ -189,6 +214,6 @@ public class DownloadTask extends AsyncTask<String, Void, DownloadTask.Result> {
             numChars = Math.min(numChars, maxLength);
             result = new String(buffer, 0, numChars);
         }
-        return result;
+        return result;*/
     }
 }

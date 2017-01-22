@@ -26,10 +26,12 @@ public class NewsItem {
 
     public void setDescription(String mDescription) {
         this.mDescription = mDescription;
-        int startIndex = this.mDescription.indexOf("src") + 4;
-        int endIndex = this.mDescription.indexOf("/>", startIndex);
-        String imgSrc = this.mDescription.substring(startIndex, endIndex);
-        this.setImageSrc(imgSrc);
+        if(mDescription != null && !mDescription.isEmpty()) {
+            int startIndex = this.mDescription.indexOf("src") + 5;
+            int endIndex = this.mDescription.indexOf("\"", startIndex);
+            String imgSrc = this.mDescription.substring(startIndex, endIndex);
+            this.setImageSrc(imgSrc);
+        }
     }
 
     public String getImageSrc() {

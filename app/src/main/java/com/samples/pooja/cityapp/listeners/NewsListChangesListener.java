@@ -10,4 +10,5 @@ public interface NewsListChangesListener {
     void onNewsListStartDownload(String sWebUrl);
     void onNewsItemSelected(int position, String sDetailUrl, int newsType);
     void onNewsListRefresh(String sWebUrl, int newsType);
+    void onFragmentSelected(int position);
 }
