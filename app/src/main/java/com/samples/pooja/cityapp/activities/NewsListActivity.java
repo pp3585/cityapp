@@ -158,7 +158,7 @@ public class NewsListActivity extends AppCompatActivity implements NewsListChang
         //Get current fragment
         Fragment page = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.container + ":" + position);
         if(page != null){
-            ((NewsListFragment)page).loadData();
+            ((NewsListFragment)page).loadData(position);
         }
     }
 

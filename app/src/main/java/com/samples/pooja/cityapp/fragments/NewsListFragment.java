@@ -25,7 +25,7 @@ public class NewsListFragment extends ListFragment {
 
     private static final String KEY_TAB_TYPE = "tab_position_number";
     private Dialog pDialog;
-    private static int mNewsLocation;
+    private int mNewsLocation;
     private NewsListAdapter mNewsListAdapter;
     private NewsListActivity mNewsListActivity;
 
@@ -60,14 +60,6 @@ public class NewsListFragment extends ListFragment {
      * number.
      */
     public static NewsListFragment newInstance(int tabPosition) {
-        switch(tabPosition) {
-            case 0:
-                mNewsLocation = NewsPageConstants.LOC_CODE_NATIONAL;
-                break;
-            case 1:
-                mNewsLocation = NewsPageConstants.LOC_CODE_CITY;
-                break;
-        }
         return new NewsListFragment();
     }
 
@@ -83,15 +75,15 @@ public class NewsListFragment extends ListFragment {
          return inflater.inflate(R.layout.fragment_news_list, container, false);
     }
 
-    public void loadData(){
+    public void loadData(int position){
         //Check if data is already loaded
         if(mNewsListAdapter == null || mNewsListAdapter.isEmpty()) {
-            //News type for the fragment is decided based on tabposition during initialization and
-            //stored in the field mNewsLocation
             //Get current selected language
             int langCode = getCurrentLanguage();
+            //Get news type - National or City
+            int newsType = getNewsType(position);
             //Get URL based on news type and language
-            String sNewsUrl = getNewsUrl(langCode, mNewsLocation);
+            String sNewsUrl = getNewsUrl(langCode, newsType);
             //Load data on creation
             mNewsListActivity.onNewsListStartDownload(sNewsUrl);
         }
@@ -115,6 +107,20 @@ public class NewsListFragment extends ListFragment {
         return sUrl;
     }
 
+    private int getNewsType(int position){
+        int newsType;
+        switch(position) {
+            case 0:
+            default:
+                newsType = NewsPageConstants.LOC_CODE_NATIONAL;
+                break;
+            case 1:
+                newsType = NewsPageConstants.LOC_CODE_CITY;
+                break;
+        }
+        return newsType;
+    }
+
     private int getCurrentLanguage() {
         int langCode;
         boolean langIsEn = mNewsListActivity.getEnLanguageState();
@@ -133,7 +139,7 @@ public class NewsListFragment extends ListFragment {
     }
 
     public void onDownloadComplete(List<NewsItem> result) {
-        mNewsListAdapter = new NewsListAdapter(getActivity(), itemname, imgid);//Place these after download
+        mNewsListAdapter = new NewsListAdapter(mNewsListActivity, result);
         setListAdapter(mNewsListAdapter);
     }
 
