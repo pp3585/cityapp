@@ -23,6 +23,7 @@ import javax.net.ssl.HttpsURLConnection;
 public class DownloadTask extends AsyncTask<String, Void, DownloadTask.Result> {
 
     private DownloadCallback<String> mCallback;
+    private String mContentType;
 
     public DownloadTask(DownloadCallback<String> callback) {
         setCallback(callback);
@@ -102,28 +103,19 @@ public class DownloadTask extends AsyncTask<String, Void, DownloadTask.Result> {
                 //Parse result value
                 List<NewsItem> newsItemList = null;
                 try {
-                    NewsParser newsParser = new NewsParser();
-                    newsItemList = newsParser.parseJsonNewsList(result.mResultValue);
+                    NewsParser newsParser;
+                    if(mContentType.contains("json")) {
+                        newsParser = new NewsParserJson();
+                    } else {
+                        newsParser = new NewsParserXml();
+                    }
+                    newsItemList = (List<NewsItem>) newsParser.parse(result.mResultValue);
                     result.setResultObject(newsItemList);
                 } catch (JSONException e) {
                     result = new Result(e);
                 }
             }
-            mCallback.updateFromDownload(result);//add list if available to result object and send to UI in err n success cases
-            /*if (result.mException != null) {//no need of this condition
-                mCallback.updateFromDownload(result.mException.getMessage());//remove this
-            } else if (result.mResultValue != null) {
-                //Parse result value
-                List<NewsItem> newsItemList = null;
-                try {
-                    NewsParser newsParser = new NewsParser();
-                    newsItemList = newsParser.parseJsonNewsList(result.mResultValue);
-                } catch (JSONException e) {
-                    result = new Result(e);
-                }
-
-                mCallback.updateFromDownload(newsItemList);//add list if available to result object and send to UI in err n success cases
-            }*/
+            mCallback.updateFromDownload(result);
             mCallback.finishDownloading();
         }
     }
@@ -162,6 +154,8 @@ public class DownloadTask extends AsyncTask<String, Void, DownloadTask.Result> {
             if (responseCode != HttpURLConnection.HTTP_OK) {
                 throw new IOException("HTTP error code: " + responseCode);
             }
+            //Get content type to connect the correct parser
+            mContentType = connection.getHeaderField("Content-Type");
             // Retrieve the response body as an InputStream.
             stream = connection.getInputStream();
             //publishProgress(DownloadCallback.Progress.GET_INPUT_STREAM_SUCCESS, 0);
@@ -185,8 +179,7 @@ public class DownloadTask extends AsyncTask<String, Void, DownloadTask.Result> {
      * Converts the contents of an InputStream to a String.
      */
     private String readStream(InputStream stream, int maxLength) throws IOException {
-        String result = null;
-        // Read InputStream using the UTF-8 charset.
+        // Read InputStream.
         InputStreamReader reader = new InputStreamReader(stream);
         BufferedReader br = new BufferedReader(reader);
         StringBuilder sb = new StringBuilder();
@@ -196,24 +189,5 @@ public class DownloadTask extends AsyncTask<String, Void, DownloadTask.Result> {
         }
         br.close();
         return sb.toString();
-        /*// Create temporary buffer to hold Stream data with specified max length.
-        char[] buffer = new char[maxLength];
-        // Populate temporary buffer with Stream data.
-        int numChars = 0;
-        int readSize = 0;
-        while (numChars < maxLength && readSize != -1) {
-            numChars += readSize;
-            int pct = (100 * numChars) / maxLength;
-            //publishProgress(DownloadCallback.Progress.PROCESS_INPUT_STREAM_IN_PROGRESS, pct);
-            readSize = reader.read(buffer, numChars, buffer.length - numChars);
-        }
-        if (numChars != -1) {
-            // The stream was not empty.
-            // Create String that is actual length of response body if actual length was less than
-            // max length.
-            numChars = Math.min(numChars, maxLength);
-            result = new String(buffer, 0, numChars);
-        }
-        return result;*/
     }
 }
