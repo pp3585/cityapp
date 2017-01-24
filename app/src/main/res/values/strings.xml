@@ -7,5 +7,5 @@
     <string name="action_language_en">English</string>
     <string name="no_data_available">No data available.</string>
     <!--<string name="key_news_language">current_news_language</string>-->
-    <string name="key_is_language_eng">check_curr_lang_en</string>
+    <string name="key_current_language_code">curr_lang_code</string>
 </resources>

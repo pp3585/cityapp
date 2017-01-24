@@ -15,13 +15,14 @@ import com.samples.pooja.cityapp.R;
 import com.samples.pooja.cityapp.fragments.NewsDetailFragment;
 import com.samples.pooja.cityapp.fragments.NewsListFragment;
 import com.samples.pooja.cityapp.utilities.NewsPageConstants;
+import com.samples.pooja.cityapp.webhandlers.News;
 
 /**
- * Created by pooja on 1/20/2017.
+ * Pager adapter that provides data to the view pager in news detail activity
  */
 public class NewsDetailPagerAdapter extends FragmentStatePagerAdapter {
 
-    public NewsDetailPagerAdapter(FragmentManager fm) {
+    public NewsDetailPagerAdapter(FragmentManager fm, News news) {
         super(fm);
     }
 

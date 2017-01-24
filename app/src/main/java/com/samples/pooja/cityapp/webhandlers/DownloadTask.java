@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -101,7 +102,7 @@ public class DownloadTask extends AsyncTask<String, Void, DownloadTask.Result> {
         if (result != null && mCallback != null) {
             if (result.mResultValue != null) {
                 //Parse result value
-                List<NewsItem> newsItemList = null;
+                News news;
                 try {
                     NewsParser newsParser;
                     if(mContentType.contains("json")) {
@@ -109,9 +110,13 @@ public class DownloadTask extends AsyncTask<String, Void, DownloadTask.Result> {
                     } else {
                         newsParser = new NewsParserXml();
                     }
-                    newsItemList = (List<NewsItem>) newsParser.parse(result.mResultValue);
-                    result.setResultObject(newsItemList);
+                    news = (News) newsParser.parse(result.mResultValue);
+                    result.setResultObject(news);
                 } catch (JSONException e) {
+                    result = new Result(e);
+                } catch (XmlPullParserException e) {
+                    result = new Result(e);
+                } catch (IOException e) {
                     result = new Result(e);
                 }
             }

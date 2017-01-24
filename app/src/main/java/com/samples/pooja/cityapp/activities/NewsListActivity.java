@@ -14,34 +14,29 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.samples.pooja.cityapp.R;
 import com.samples.pooja.cityapp.adapters.NewsPagerAdapter;
 import com.samples.pooja.cityapp.fragments.NetworkFragment;
 import com.samples.pooja.cityapp.fragments.NewsListFragment;
-import com.samples.pooja.cityapp.listeners.NewsListChangesListener;
+import com.samples.pooja.cityapp.listeners.NewsListFragmentChangesListener;
+import com.samples.pooja.cityapp.utilities.NewsPageConstants;
 import com.samples.pooja.cityapp.webhandlers.DownloadCallback;
 import com.samples.pooja.cityapp.webhandlers.DownloadTask;
-import com.samples.pooja.cityapp.webhandlers.NewsItem;
-
-import org.json.JSONObject;
-
-import java.util.List;
+import com.samples.pooja.cityapp.webhandlers.News;
 
 /*
 * This activity displays the news list with tabs for national and city news.
 */
-public class NewsListActivity extends AppCompatActivity implements NewsListChangesListener, DownloadCallback, ViewPager.OnPageChangeListener {
+public class NewsListActivity extends AppCompatActivity implements NewsListFragmentChangesListener, DownloadCallback, ViewPager.OnPageChangeListener {
 
     private NewsPagerAdapter mNewsPagerAdapter;
     private ViewPager mViewPager;
+    //Hold the News data in this static field to be referenced by detail pages.
+    public static News news;
     // Keep a reference to the NetworkFragment, which owns the AsyncTask object
     // that is used to execute network ops.
     private NetworkFragment mNetworkFragment;
-    // Boolean telling us whether a download is in progress, so we don't trigger overlapping
-    // downloads with consecutive button clicks.
-    private boolean mDownloading = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,21 +66,20 @@ public class NewsListActivity extends AppCompatActivity implements NewsListChang
     }
 
     private void startDownload(String url) {
-        if (/*!mDownloading && */mNetworkFragment != null) {
+        if (mNetworkFragment != null) {
             // Execute the async download.
             mNetworkFragment.startDownload(url);
-            mDownloading = true;
         }
     }
 
     private void setDefaultNewsLanguage() {
-        setEnLanguageState(true);
+        setLanguageCode(NewsPageConstants.LANG_CODE_EN);
     }
 
-    private void setEnLanguageState(boolean b) {
+    private void setLanguageCode(int langCode) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putBoolean(getString(R.string.key_is_language_eng), b);
+        editor.putInt(getString(R.string.key_current_language_code), langCode);
         editor.apply();
     }
 
@@ -96,9 +90,9 @@ public class NewsListActivity extends AppCompatActivity implements NewsListChang
 
         //Get language menu item
         MenuItem menuItem = menu.getItem(0);
-        //Check current state of language and set title of menu item accordingly
-        boolean langIsEn = getEnLanguageState();
-        if(langIsEn){
+        //Check current language code and set title of menu item accordingly
+        int langCode = getLanguageCode();
+        if(langCode == 1){
             //If current language is English, menu item provides option to switch to Hindi.
             // Hence the title Hindi.
             menuItem.setTitle(getResources().getString(R.string.action_language_hi));
@@ -113,29 +107,46 @@ public class NewsListActivity extends AppCompatActivity implements NewsListChang
     public boolean onOptionsItemSelected(MenuItem item) {
         int id =  item.getItemId();
         if(id == R.id.action_language) {
-            //Check if language previously selected was English.
-            boolean langIsEn = getEnLanguageState();
-            langIsEn = !langIsEn;
-            //Store the language state in shared preferences
-            setEnLanguageState(langIsEn);
-            //Change text of button
+            saveNewLanguage();
             invalidateOptionsMenu();
-            //Refresh screens
-            return true;//Temporary
+            notifyLanguageChanged();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    public boolean getEnLanguageState() {
+    private void saveNewLanguage() {
+        //Get current language.
+        int langCode = getLanguageCode();
+        if(langCode == NewsPageConstants.LANG_CODE_EN){
+            //Save new language
+            setLanguageCode(NewsPageConstants.LANG_CODE_HI);
+        } else {
+            setLanguageCode(NewsPageConstants.LANG_CODE_EN);
+        }
+    }
+
+    /*
+    * Notify fragment when language is changed by user
+    */
+    private void notifyLanguageChanged() {
+        int position = mViewPager.getCurrentItem();
+        int langCode = getLanguageCode();
+        Fragment page = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.container + ":" + position);
+        if(page != null){
+            ((NewsListFragment)page).onLanguageChanged(position, langCode);
+        }
+    }
+
+    public int getLanguageCode() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        return sharedPref.getBoolean(getString(R.string.key_is_language_eng), true);
+        return sharedPref.getInt(getString(R.string.key_current_language_code), NewsPageConstants.LANG_CODE_EN);
     }
 
     @Override
     public void onNewsListStartDownload(String sWebUrl) {
         //Call API to load data
         startDownload(sWebUrl);
-
     }
 
     @Override
@@ -155,11 +166,18 @@ public class NewsListActivity extends AppCompatActivity implements NewsListChang
     */
     @Override
     public void onFragmentSelected(int position) {
+        //Get current language
+        int langCode = getLanguageCode();
         //Get current fragment
         Fragment page = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.container + ":" + position);
         if(page != null){
-            ((NewsListFragment)page).loadData(position);
+            ((NewsListFragment)page).loadData(position, langCode);
         }
+    }
+
+    @Override
+    public void onFragmentReady() {
+        onFragmentSelected(0);
     }
 
     /*
@@ -175,9 +193,11 @@ public class NewsListActivity extends AppCompatActivity implements NewsListChang
                 ((NewsListFragment) page).onDownloadError(finalResult.mException);
             }
         } else if (finalResult.mResultObject != null) {
+            //Store the news data in a static field to be accessed by list page and detailed page
+            news = (News)finalResult.mResultObject;
             //Pass result to appropriate fragment
             if (page != null) {
-                ((NewsListFragment) page).onDownloadComplete((List<NewsItem>) finalResult.mResultObject);
+                ((NewsListFragment) page).onDownloadComplete((News)finalResult.mResultObject);
             }
         }
     }
@@ -208,7 +228,6 @@ public class NewsListActivity extends AppCompatActivity implements NewsListChang
 
     @Override
     public void finishDownloading() {
-        mDownloading = false;
         if (mNetworkFragment != null) {
             mNetworkFragment.cancelDownload();
         }

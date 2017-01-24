@@ -12,6 +12,18 @@ public class NewsItem {
     private String mDate;
     private String mLink;
 
+    public NewsItem(){
+
+    }
+
+    public NewsItem(String title, String description, String imageSrc, String date, String link){
+        mTitle = title;
+        mDescription = description;
+        mImageSrc = imageSrc;
+        mDate = date;
+        mLink = link;
+    }
+
     public String getTitle() {
         return mTitle;
     }
@@ -25,12 +37,10 @@ public class NewsItem {
     }
 
     public void setDescription(String description) {
-        this.mDescription = description;
         if(description != null && !description.isEmpty()) {
             //Get description without HTML if HTML exists
-            if(description.indexOf("</a>") != -1) {
-                String descWoHtml = description.substring(description.indexOf("</a>") + 4);
-                mDescription = descWoHtml;
+            if(description.contains("</a>")) {
+                mDescription = description.substring(description.indexOf("</a>") + 4);
                 //Get image URL from the extracted HTML
                 String html = description.substring(0, description.indexOf("</a>") + 3);
                 int startIndex = html.indexOf("src") + 5;
@@ -48,7 +58,7 @@ public class NewsItem {
         return mImageSrc;
     }
 
-    public void setImageSrc(String imageSrc) {
+    private void setImageSrc(String imageSrc) {
         this.mImageSrc = imageSrc;
     }
 

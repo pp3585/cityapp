@@ -5,17 +5,21 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Parser class for news
  */
 
-public class NewsParserJson extends NewsParser {
+class NewsParserJson extends NewsParser {
 
+    private News mNews = new News();
     private List<NewsItem> mNewsItemList = new ArrayList<>();
+    private HashMap<Integer, String> mNewsLinksMap = new HashMap<>();
 
-    public List<NewsItem> parse(String result) throws JSONException {
+    public News parse(String result) throws JSONException {
         JSONObject resultObject = new JSONObject(result);
         JSONObject channelObj = resultObject.getJSONObject("channel");
         JSONArray newsItemsArr = channelObj.getJSONArray("item");
@@ -27,10 +31,13 @@ public class NewsParserJson extends NewsParser {
             newsItem.setTitle(jsonNewsItem.getString("title"));
             newsItem.setDescription(jsonNewsItem.getString("description"));
             newsItem.setLink(jsonNewsItem.getString("link"));
+            mNewsLinksMap.put(i, newsItem.getLink());
             newsItem.setDate(jsonNewsItem.getString("pubDate"));
             mNewsItemList.add(newsItem);
         }
 
-        return mNewsItemList;
+        mNews.setNewsListItems(mNewsItemList);
+        mNews.setNewsLinksMap(mNewsLinksMap);
+        return mNews;
     }
 }
