@@ -8,4 +8,6 @@
     <string name="no_data_available">No data available.</string>
     <!--<string name="key_news_language">current_news_language</string>-->
     <string name="key_current_language_code">curr_lang_code</string>
+    <string name="title_activity_news_detail_web_view">NewsDetailWebViewActivity</string>
+    <string name="action_settings">Settings</string>
 </resources>

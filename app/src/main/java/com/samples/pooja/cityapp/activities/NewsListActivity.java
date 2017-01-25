@@ -109,10 +109,48 @@ public class NewsListActivity extends AppCompatActivity implements NewsListFragm
         if(id == R.id.action_language) {
             saveNewLanguage();
             invalidateOptionsMenu();
+            changeTabTitles();
             notifyLanguageChanged();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void changeTabTitles() {
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        TabLayout.Tab tabNational = tabLayout.getTabAt(0);
+        TabLayout.Tab tabCity = tabLayout.getTabAt(1);
+        if (tabNational != null) {
+            tabNational.setText(getTabName(0));
+        }
+        if(tabCity != null){
+            tabCity.setText(getTabName(1));
+        }
+    }
+
+    private String getTabName(int tabPosition) {
+        String tabTitle = "";
+        int langCode = getLanguageCode();
+        if(langCode == NewsPageConstants.LANG_CODE_EN){
+            switch(tabPosition){
+                case 0:
+                    tabTitle = NewsPageConstants.STR_TAB_1_EN;
+                    break;
+                case 1:
+                    tabTitle = NewsPageConstants.STR_TAB_2_EN;
+                    break;
+            }
+        } else {
+            switch(tabPosition){
+                case 0:
+                    tabTitle = NewsPageConstants.STR_TAB_1_HI;
+                    break;
+                case 1:
+                    tabTitle = NewsPageConstants.STR_TAB_2_HI;
+                    break;
+            }
+        }
+        return tabTitle;
     }
 
     private void saveNewLanguage() {
@@ -152,7 +190,8 @@ public class NewsListActivity extends AppCompatActivity implements NewsListFragm
     @Override
     public void onNewsItemSelected(int position, String sDetailUrl, int newsType) {
         //Call detail screen
-        Intent intent = new Intent(this, NewsDetailActivity.class);
+        Intent intent = new Intent(this, NewsDetailWebViewActivity.class);
+        intent.putExtra(NewsPageConstants.KEY_SELECTED_POSITION, position);
         startActivity(intent);
     }
 

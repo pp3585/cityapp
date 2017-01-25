@@ -33,10 +33,10 @@ public class NewsPagerAdapter extends FragmentPagerAdapter {
         switch (position) {
             case 0:
             default:
-                sTabName = NewsPageConstants.STR_TAB_1;
+                sTabName = NewsPageConstants.STR_TAB_1_EN;
                 break;
             case 1:
-                sTabName = NewsPageConstants.STR_TAB_2;
+                sTabName = NewsPageConstants.STR_TAB_2_EN;
         }
         return sTabName;
     }
