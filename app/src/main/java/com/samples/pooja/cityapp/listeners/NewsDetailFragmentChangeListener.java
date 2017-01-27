@@ -11,5 +11,5 @@ public interface NewsDetailFragmentChangeListener {
    // void onNewsItemSelected(int position, String sDetailUrl, int newsType);
     //void onNewsListRefresh(String sWebUrl, int newsType);
     void onFragmentSelected(int position);
-
+    void onFragmentReady();
 }

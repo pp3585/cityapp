@@ -190,7 +190,7 @@ public class NewsListActivity extends AppCompatActivity implements NewsListFragm
     @Override
     public void onNewsItemSelected(int position, String sDetailUrl, int newsType) {
         //Call detail screen
-        Intent intent = new Intent(this, NewsDetailWebViewActivity.class);
+        Intent intent = new Intent(this, NewsDetailActivity.class);
         intent.putExtra(NewsPageConstants.KEY_SELECTED_POSITION, position);
         startActivity(intent);
     }
@@ -212,6 +212,18 @@ public class NewsListActivity extends AppCompatActivity implements NewsListFragm
         if(page != null){
             ((NewsListFragment)page).loadData(position, langCode);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        /*int currentPosition = mViewPager.getCurrentItem();
+        onFragmentSelected(currentPosition);*/
     }
 
     @Override

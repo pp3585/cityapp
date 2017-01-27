@@ -1,23 +1,20 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    tools:context="com.samples.pooja.cityapp.fragments.NewsDetailFragment">
 
-    tools:context="com.samples.pooja.cityapp.fragments.NewsListFragment">
 
-    <ImageView
-        android:id="@+id/iv_fragment_detail"
+
+    <WebView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:srcCompat="@android:drawable/btn_star_big_off">
-    </ImageView>
+        android:layout_below="@+id/wv_detail_progress"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:background="@color/colorAccent"
+        android:id="@+id/wv_news_detail">
 
-    <!--<TextView
-        android:id="@android:id/empty"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/no_data_available">
-    </TextView>-->
+    </WebView>
 
 </RelativeLayout>

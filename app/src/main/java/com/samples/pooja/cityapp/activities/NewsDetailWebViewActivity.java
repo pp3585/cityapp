@@ -1,6 +1,9 @@
 package com.samples.pooja.cityapp.activities;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.os.Build;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -19,10 +22,15 @@ import android.view.ViewGroup;
 
 import android.view.Window;
 import android.view.WindowManager;
+import android.webkit.WebChromeClient;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.samples.pooja.cityapp.R;
 import com.samples.pooja.cityapp.adapters.NewsDetailWebViewPagerAdapter;
@@ -55,6 +63,7 @@ public class NewsDetailWebViewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+
         setContentView(R.layout.activity_news_detail_web_view);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -90,11 +99,45 @@ public class NewsDetailWebViewActivity extends AppCompatActivity {
     }
 
     private List<View> addView(List<View> viewList,String url) {
+        final Activity activity = this;
+        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.wv_progress);
         WebView webView = new WebView(this);
-        webView.setWebViewClient(new WebViewClient());
+        //WebView webView = (WebView) findViewById(R.id.wv_news_detail);
+        webView.getSettings().setJavaScriptEnabled(true);
+        /*if (Build.VERSION.SDK_INT >= 19) {
+            webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+        }
+        else {
+            webView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        }*/
+        webView.setWebChromeClient(new WebChromeClient(){
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                super.onProgressChanged(view, newProgress);
+                activity.setProgress(newProgress * 100);
+            }
+        });
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                progressBar.setVisibility(View.VISIBLE);
+                super.onPageStarted(view, url, favicon);
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                progressBar.setVisibility(View.GONE);
+                super.onPageFinished(view, url);
+            }
+
+            @Override
+            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                super.onReceivedError(view, request, error);
+                Toast.makeText(activity, "Cannot load page", Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(View.GONE);
+            }
+        });
         webView.loadUrl(url);
-        WebSettings webSettings = webView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
         viewList.add(webView);
         return viewList;
     }
@@ -105,5 +148,11 @@ public class NewsDetailWebViewActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_news_detail_web_view, menu);
 
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }

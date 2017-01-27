@@ -2,6 +2,7 @@
     <string name="app_name">CityApp</string>
     <string name="news">News</string>
     <string name="title_activity_news_list">Top News</string>
+    <string name="title_activity_news_detail">Details</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="action_language_hi">हिन्दी</string>
     <string name="action_language_en">English</string>

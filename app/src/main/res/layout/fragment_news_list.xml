@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
 
     tools:context="com.samples.pooja.cityapp.fragments.NewsListFragment">
 
@@ -9,14 +10,18 @@
         android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         >
     </ListView>
 
-    <!--<TextView
+    <TextView
         android:id="@android:id/empty"
-        android:layout_width="match_parent"
+        android:padding="10dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/no_data_available">
-    </TextView>-->
+        android:text="@string/no_data_available"
+        android:layout_centerInParent="true"
+        android:textAppearance="?android:attr/textAppearanceMedium">
+    </TextView>
 
 </RelativeLayout>

@@ -56,6 +56,10 @@ public class NewsListAdapter extends ArrayAdapter<NewsItem> {
             viewHolder.txtTitle.setText(newsItem.getTitle());
             Picasso.with(getContext())
                     .load(newsItem.getImageSrc())
+                    .placeholder(R.drawable.placeholder)
+                    .error(R.drawable.error)
+                    .resize(50, 50)
+                    .centerCrop()
                     .into(viewHolder.img);
         }
         return convertView;

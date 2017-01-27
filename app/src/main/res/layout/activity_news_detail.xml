@@ -13,7 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-
         <android.support.design.widget.AppBarLayout
             android:id="@+id/appbar_news_detail"
             android:layout_width="match_parent"
@@ -31,13 +30,18 @@
 
             </android.support.v7.widget.Toolbar>
 
-            <!--<android.support.design.widget.TabLayout
-                android:id="@+id/tabs"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:tabMode="fixed"/>-->
-
         </android.support.design.widget.AppBarLayout>
+
+        <ProgressBar
+            android:id="@+id/wv_detail_progress"
+
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:minHeight="5dp"
+            android:maxHeight="5dp"
+            android:visibility="visible"/>
 
         <android.support.v4.view.ViewPager
             android:id="@+id/vp_news_detail"

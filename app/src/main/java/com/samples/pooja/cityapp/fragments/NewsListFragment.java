@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.samples.pooja.cityapp.R;
@@ -109,8 +110,10 @@ public class NewsListFragment extends ListFragment {
 
     public void onDownloadError(Exception exception) {
         mForceRefresh = false;
-        //Create error text based on exceotion
+        //Create error text based on exception
         //Load empty view text with the error text
         Toast.makeText(mNewsListActivity, exception.getMessage(), Toast.LENGTH_LONG).show();//Need to make better texts and dialogs
+        TextView emptyTxtView = (TextView)getView().findViewById(android.R.id.empty);
+        emptyTxtView.setText(exception.getMessage());
     }
 }

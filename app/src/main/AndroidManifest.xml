@@ -21,15 +21,19 @@
         <activity
             android:name=".activities.NewsListActivity"
             android:label="@string/title_activity_news_list"
+            android:screenOrientation="portrait"
             android:parentActivityName=".activities.MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activities.NewsDetailActivity"
-            android:label="@string/title_activity_news_list"
+            android:label="@string/title_activity_news_detail"
+            android:screenOrientation="portrait"
             android:parentActivityName=".activities.NewsListActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activities.NewsDetailWebViewActivity"
+            android:label="@string/title_activity_news_detail"
+            android:screenOrientation="portrait"
             android:parentActivityName=".activities.NewsListActivity"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>

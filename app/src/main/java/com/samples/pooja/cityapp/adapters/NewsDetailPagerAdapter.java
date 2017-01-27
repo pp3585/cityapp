@@ -17,24 +17,31 @@ import com.samples.pooja.cityapp.fragments.NewsListFragment;
 import com.samples.pooja.cityapp.utilities.NewsPageConstants;
 import com.samples.pooja.cityapp.webhandlers.News;
 
+import java.util.HashMap;
+
 /**
  * Pager adapter that provides data to the view pager in news detail activity
  */
 public class NewsDetailPagerAdapter extends FragmentStatePagerAdapter {
 
-    public NewsDetailPagerAdapter(FragmentManager fm, News news) {
+    private final HashMap<Integer, String> mNewsUrlMap;
+    private int mSelectedPosition;
+
+    public NewsDetailPagerAdapter(FragmentManager fm, HashMap<Integer, String> newsHashMap, int selectedPosition) {
         super(fm);
+        mNewsUrlMap = newsHashMap;
+        mSelectedPosition = selectedPosition;
     }
 
     @Override
     public Fragment getItem(int position) {
-        return NewsDetailFragment.newInstance(position);
+        return NewsDetailFragment.newInstance(mNewsUrlMap.get(Integer.valueOf(position)));
     }
 
     @Override
     public int getCount() {
         // Returns the number of fragments based on the number of news items.
-        return 8;
+        return mNewsUrlMap.size();
     }
 
     /*@Override
