@@ -7,7 +7,7 @@ package com.samples.pooja.cityapp.listeners;
 
 public interface NewsDetailFragmentChangeListener {
 
-    void onNewsDetailsFetchData();
+    void onNewsDetailsStartDownload(String url);
    // void onNewsItemSelected(int position, String sDetailUrl, int newsType);
     //void onNewsListRefresh(String sWebUrl, int newsType);
     void onFragmentSelected(int position);

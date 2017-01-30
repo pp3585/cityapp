@@ -3,6 +3,8 @@ package com.samples.pooja.cityapp.webhandlers;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,6 +15,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.List;
 
@@ -21,7 +25,7 @@ import javax.net.ssl.HttpsURLConnection;
 /**
  * Implementation of AsyncTask designed to fetch data from the network.
  */
-public class DownloadTask extends AsyncTask<String, Void, DownloadTask.Result> {
+public class DownloadTask extends AsyncTask<String, Integer, DownloadTask.Result> {
 
     private DownloadCallback<String> mCallback;
     private String mContentType;
@@ -80,16 +84,33 @@ public class DownloadTask extends AsyncTask<String, Void, DownloadTask.Result> {
         if (!isCancelled() && urls != null && urls.length > 0) {
             String urlString = urls[0];
             try {
-                URL url = new URL(urlString);
-                String resultString = downloadUrl(url);
-                if (resultString != null) {
-                    result = new Result(resultString);
-                } else {
-                    throw new IOException("No response received.");
-                }
+                result = getData(urlString);
+            /*} catch(MalformedURLException me) {
+                //Add protocol if url is not correctly formed
+                urlString = "http://timesofindia.indiatimes.com/" + urlString;
+                try{
+                    getData(urlString);
+                } catch (IOException e) {
+                    result = new Result(e);
+                }*/
             } catch(Exception e) {
                 result = new Result(e);
             }
+        }
+        return result;
+    }
+
+    /**
+     * Forms correct URL and returns data.
+     */
+    private Result getData(String urlString) throws IOException {
+        Result result = null;
+        URL url = new URL(urlString);
+        String resultString = downloadUrl(url);
+        if (resultString != null) {
+            result = new Result(resultString);
+        } else {
+            throw new IOException("No response received.");
         }
         return result;
     }
@@ -102,15 +123,17 @@ public class DownloadTask extends AsyncTask<String, Void, DownloadTask.Result> {
         if (result != null && mCallback != null) {
             if (result.mResultValue != null) {
                 //Parse result value
-                News news;
+                Object news;
                 try {
                     NewsParser newsParser;
                     if(mContentType.contains("json")) {
                         newsParser = new NewsParserJson();
-                    } else {
+                    } else if(mContentType.contains("xml")) {
                         newsParser = new NewsParserXml();
+                    } else {
+                        newsParser = new NewsParserHtml();
                     }
-                    news = (News) newsParser.parse(result.mResultValue);
+                    news = newsParser.parse(result.mResultValue);
                     result.setResultObject(news);
                 } catch (JSONException e) {
                     result = new Result(e);
@@ -154,7 +177,7 @@ public class DownloadTask extends AsyncTask<String, Void, DownloadTask.Result> {
             connection.setDoInput(true);
             // Open communications link (network traffic occurs here).
             connection.connect();
-            //publishProgress(DownloadCallback.Progress.CONNECT_SUCCESS);
+            publishProgress(DownloadCallback.Progress.CONNECT_SUCCESS);
             int responseCode = connection.getResponseCode();
             if (responseCode != HttpURLConnection.HTTP_OK) {
                 throw new IOException("HTTP error code: " + responseCode);
@@ -163,7 +186,7 @@ public class DownloadTask extends AsyncTask<String, Void, DownloadTask.Result> {
             mContentType = connection.getHeaderField("Content-Type");
             // Retrieve the response body as an InputStream.
             stream = connection.getInputStream();
-            //publishProgress(DownloadCallback.Progress.GET_INPUT_STREAM_SUCCESS, 0);
+            publishProgress(DownloadCallback.Progress.GET_INPUT_STREAM_SUCCESS, 0);
             if (stream != null) {
                 // Converts Stream to String with max length of 500.
                 result = readStream(stream, 500);

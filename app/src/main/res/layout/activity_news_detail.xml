@@ -8,47 +8,31 @@
     android:fitsSystemWindows="true"
     tools:context="com.samples.pooja.cityapp.activities.NewsDetailActivity">
 
-    <LinearLayout
-        android:id="@+id/ll_news_detail"
+    <!--<ProgressBar
+        android:id="@+id/pb_detail"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="30dp"
+        android:maxHeight="10dp"
+        android:visibility="visible"/>-->
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/vp_news_detail"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-        <android.support.design.widget.AppBarLayout
-            android:id="@+id/appbar_news_detail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="0dp"
-            android:theme="@style/AppTheme.AppBarOverlay">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar_news_detail"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
-                app:layout_scrollFlags="scroll|enterAlways"
-                app:popupTheme="@style/AppTheme.PopupOverlay">
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_news_detail"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_scrollFlags="scroll|enterAlways"
+        style="@style/AppTheme.PopupOverlay"
+        android:background="@drawable/toolbar_gradient"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
-            </android.support.v7.widget.Toolbar>
-
-        </android.support.design.widget.AppBarLayout>
-
-        <ProgressBar
-            android:id="@+id/wv_detail_progress"
-
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:indeterminate="true"
-            android:minHeight="5dp"
-            android:maxHeight="5dp"
-            android:visibility="visible"/>
-
-        <android.support.v4.view.ViewPager
-            android:id="@+id/vp_news_detail"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-    </LinearLayout>
+    </android.support.v7.widget.Toolbar>
 
 </android.support.design.widget.CoordinatorLayout>

@@ -1,0 +1,67 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.samples.pooja.cityapp.fragments.DetailPageFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/iv_detail_page"
+            android:src="@drawable/placeholder_large"
+            android:layout_alignParentTop="true"
+            android:scaleType="centerCrop"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="?android:textAppearanceSmall"
+            android:textStyle="italic"
+            android:paddingRight="16dp"
+            android:paddingLeft="16dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="16dp"
+            android:lineSpacingMultiplier="1.2"
+            android:id="@+id/tv_detail_img_desc"
+            android:layout_below="@+id/iv_detail_page"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="?android:textAppearanceLarge"
+            android:textStyle="bold"
+            android:paddingRight="16dp"
+            android:paddingLeft="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="5dp"
+            android:lineSpacingMultiplier="1.2"
+            android:id="@+id/tv_detail_title"
+            android:layout_below="@+id/tv_detail_img_desc"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="?android:textAppearanceSmall"
+            android:paddingRight="16dp"
+            android:paddingLeft="16dp"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"
+            android:lineSpacingMultiplier="1.2"
+            android:id="@+id/tv_detail_src_pub_date"
+            android:layout_below="@+id/tv_detail_title"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="?android:textAppearanceMedium"
+            android:padding="16dp"
+            android:lineSpacingMultiplier="1.2"
+            android:id="@+id/tv_detail_desc"
+            android:layout_below="@+id/tv_detail_src_pub_date"/>
+
+    </RelativeLayout>
+</ScrollView>

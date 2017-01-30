@@ -190,7 +190,7 @@ public class NewsListActivity extends AppCompatActivity implements NewsListFragm
     @Override
     public void onNewsItemSelected(int position, String sDetailUrl, int newsType) {
         //Call detail screen
-        Intent intent = new Intent(this, NewsDetailActivity.class);
+        Intent intent = new Intent(this, DetailPageActivity.class);
         intent.putExtra(NewsPageConstants.KEY_SELECTED_POSITION, position);
         startActivity(intent);
     }
