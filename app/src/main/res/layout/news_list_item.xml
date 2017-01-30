@@ -3,7 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    android:minHeight="70dp">
+    android:minHeight="70dp"
+    android:paddingEnd="8dp"
+    android:paddingStart="4dp"
+    android:paddingBottom="4dp">
 
     <ImageView
         android:id="@+id/news_icon"
@@ -17,7 +20,7 @@
         android:layout_height="wrap_content"
         android:text="Medium Text"
         android:textAppearance="?android:attr/textAppearanceListItemSmall"
-        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="5dp"
         android:padding="2dp"/>
 
