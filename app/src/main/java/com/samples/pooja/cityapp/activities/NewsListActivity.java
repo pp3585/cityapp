@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -63,6 +64,14 @@ public class NewsListActivity extends AppCompatActivity implements NewsListFragm
         tabLayout.setupWithViewPager(mViewPager);
 
         mNetworkFragment = NetworkFragment.getInstance(getSupportFragmentManager());
+
+        mViewPager.post(new Runnable() {
+            @Override
+            public void run() {
+                mViewPager.setCurrentItem(0);
+                onFragmentSelected(0);
+            }
+        });
     }
 
     private void startDownload(String url) {
@@ -107,13 +116,17 @@ public class NewsListActivity extends AppCompatActivity implements NewsListFragm
     public boolean onOptionsItemSelected(MenuItem item) {
         int id =  item.getItemId();
         if(id == R.id.action_language) {
-            saveNewLanguage();
-            invalidateOptionsMenu();
-            changeTabTitles();
-            notifyLanguageChanged();
+            doLanguageSwitch();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void doLanguageSwitch() {
+        saveNewLanguage();
+        invalidateOptionsMenu();
+        changeTabTitles();
+        notifyLanguageChanged();
     }
 
     private void changeTabTitles() {
@@ -182,6 +195,18 @@ public class NewsListActivity extends AppCompatActivity implements NewsListFragm
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        Log.i("CITY_INFO", "onSaveInstance");
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        Log.i("CITY_INFO", "onRestore");
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    @Override
     public void onNewsListStartDownload(String sWebUrl) {
         //Call API to load data
         startDownload(sWebUrl);
@@ -194,6 +219,7 @@ public class NewsListActivity extends AppCompatActivity implements NewsListFragm
         intent.putExtra(NewsPageConstants.KEY_SELECTED_POSITION, position);
         startActivity(intent);
     }
+
 
     @Override
     public void onNewsListRefresh(String sWebUrl, int newsType) {
@@ -215,20 +241,59 @@ public class NewsListActivity extends AppCompatActivity implements NewsListFragm
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.i("CITY_INFO", "ondestroy");
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
+        Log.i("CITY_INFO", "onPause");
+        saveCurrentState();
+    }
+
+    private void saveCurrentState() {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        //Save current tab selection
+        editor.putInt(NewsPageConstants.KEY_NEWS_TYPE_TAB, mViewPager.getCurrentItem());
+        //Save current language selection
+        editor.putInt(NewsPageConstants.KEY_LANGUAGE_CODE, getLanguageCode());
+        editor.apply();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        /*int currentPosition = mViewPager.getCurrentItem();
-        onFragmentSelected(currentPosition);*/
+        Log.i("CITY_INFO", "onResume");
+        restoreCurrentState();
+    }
+
+    private void restoreCurrentState() {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        //Get last selected tab
+        final int position = sharedPref.getInt(NewsPageConstants.KEY_NEWS_TYPE_TAB, NewsPageConstants.LOC_CODE_NATIONAL);
+        //Get last selected language code
+        int langCode = sharedPref.getInt(NewsPageConstants.KEY_LANGUAGE_CODE, NewsPageConstants.LANG_CODE_EN);
+        //Initiate changes based on language
+        setLanguageCode(langCode);
+        invalidateOptionsMenu();
+        changeTabTitles();
+        //Set tab to last selected position
+        mViewPager.post(new Runnable() {
+            @Override
+            public void run() {
+                mViewPager.setCurrentItem(position);
+                //onFragmentSelected(position);
+                notifyLanguageChanged();
+            }
+        });
     }
 
     @Override
     public void onFragmentReady() {
-        onFragmentSelected(0);
+        //onFragmentSelected(0);
     }
 
     /*

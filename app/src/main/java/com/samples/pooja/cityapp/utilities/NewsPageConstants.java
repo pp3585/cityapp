@@ -22,4 +22,7 @@ public class NewsPageConstants {
     public static final String TAG_NETWORK_FRAGMENT = "NetworkFragment";
     public static final String KEY_SELECTED_POSITION = "key_list_selected_position";
     public static final String KEY_NEWS_DETAIL_URL = "key_news_detail_url";
+    public static final int REQUEST_CODE_DETAIL_ACTIVITY = 2;
+    public static final String KEY_NEWS_TYPE_TAB = "key_news_type_tab";
+    public static final String KEY_LANGUAGE_CODE = "key_language_code";
 }

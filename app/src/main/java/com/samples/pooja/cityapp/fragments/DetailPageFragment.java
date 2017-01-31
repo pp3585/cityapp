@@ -65,21 +65,25 @@ public class DetailPageFragment extends Fragment {
 
     public void onDownloadComplete(NewsDetail resultObject) {
         //Set content to textview and imageview
-        ImageView imgView = (ImageView)getView().findViewById(R.id.iv_detail_page);
-        TextView txtImgDesc = (TextView) getView().findViewById(R.id.tv_detail_img_desc);
-        TextView txtTitle = (TextView) getView().findViewById(R.id.tv_detail_title);
-        TextView txtSrcPubDate = (TextView) getView().findViewById(R.id.tv_detail_src_pub_date);
-        TextView txtDesc = (TextView) getView().findViewById(R.id.tv_detail_desc);
+        if(getView() != null) {
+            ImageView imgView = (ImageView) getView().findViewById(R.id.iv_detail_page);
+            TextView txtImgDesc = (TextView) getView().findViewById(R.id.tv_detail_img_desc);
+            TextView txtTitle = (TextView) getView().findViewById(R.id.tv_detail_title);
+            TextView txtSrcPubDate = (TextView) getView().findViewById(R.id.tv_detail_src_pub_date);
+            TextView txtDesc = (TextView) getView().findViewById(R.id.tv_detail_desc);
 
-        Picasso.with(getContext())
-                //.load("http://timesofindia.indiatimes.com/thumb/msid-56868385,width-1200,resizemode-4/56868385.jpg")
-                .load(resultObject.getImgSrc())
-                //.placeholder(R.drawable.placeholder)
-                .error(R.drawable.error)
-                .into(imgView);
-        txtImgDesc.setText(resultObject.getImgDesc());
-        txtTitle.setText(resultObject.getTitle());
-        txtSrcPubDate.setText(resultObject.getSource() + " | " + resultObject.getPubDate());
-        txtDesc.setText(resultObject.getDescription());
+            Picasso.with(getContext())
+                    //.load("http://timesofindia.indiatimes.com/thumb/msid-56868385,width-1200,resizemode-4/56868385.jpg")
+                    .load(resultObject.getImgSrc())
+                    .fit()
+                    .centerInside()
+                    //.placeholder(R.drawable.placeholder)
+                    .error(R.drawable.error)
+                    .into(imgView);
+            txtImgDesc.setText(resultObject.getImgDesc());
+            txtTitle.setText(resultObject.getTitle());
+            txtSrcPubDate.setText(resultObject.getSource() + " | " + resultObject.getPubDate());
+            txtDesc.setText(resultObject.getDescription());
+        }
     }
 }

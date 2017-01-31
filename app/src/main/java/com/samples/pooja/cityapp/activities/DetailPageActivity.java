@@ -128,8 +128,6 @@ public class DetailPageActivity extends AppCompatActivity implements NewsDetailF
                 ((DetailPageFragment) page).onDownloadComplete((NewsDetail) finalResult.mResultObject);
             }
         }
-        /*ProgressBar progressBar = (ProgressBar) findViewById(R.id.pb_detail);
-        progressBar.setVisibility(View.GONE);*/
     }
 
     @Override
