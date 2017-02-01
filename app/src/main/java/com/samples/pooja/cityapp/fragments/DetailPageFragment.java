@@ -13,11 +13,8 @@ import android.widget.Toast;
 
 import com.samples.pooja.cityapp.R;
 import com.samples.pooja.cityapp.activities.DetailPageActivity;
-import com.samples.pooja.cityapp.activities.NewsListActivity;
 import com.samples.pooja.cityapp.utilities.NewsPageConstants;
-import com.samples.pooja.cityapp.webhandlers.DownloadTask;
-import com.samples.pooja.cityapp.webhandlers.News;
-import com.samples.pooja.cityapp.webhandlers.NewsDetail;
+import com.samples.pooja.cityapp.datamodels.NewsDetail;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -73,12 +70,9 @@ public class DetailPageFragment extends Fragment {
             TextView txtDesc = (TextView) getView().findViewById(R.id.tv_detail_desc);
 
             Picasso.with(getContext())
-                    //.load("http://timesofindia.indiatimes.com/thumb/msid-56868385,width-1200,resizemode-4/56868385.jpg")
                     .load(resultObject.getImgSrc())
                     .fit()
                     .centerInside()
-                    //.placeholder(R.drawable.placeholder)
-                    .error(R.drawable.error)
                     .into(imgView);
             txtImgDesc.setText(resultObject.getImgDesc());
             txtTitle.setText(resultObject.getTitle());

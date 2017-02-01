@@ -9,20 +9,17 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.widget.ProgressBar;
+import android.view.MenuItem;
 
 import com.samples.pooja.cityapp.R;
 import com.samples.pooja.cityapp.adapters.NewsDetailPagerAdapter;
 import com.samples.pooja.cityapp.fragments.DetailPageFragment;
 import com.samples.pooja.cityapp.fragments.NetworkFragment;
-import com.samples.pooja.cityapp.fragments.NewsListFragment;
 import com.samples.pooja.cityapp.listeners.NewsDetailFragmentChangeListener;
 import com.samples.pooja.cityapp.utilities.NewsPageConstants;
 import com.samples.pooja.cityapp.webhandlers.DownloadCallback;
 import com.samples.pooja.cityapp.webhandlers.DownloadTask;
-import com.samples.pooja.cityapp.webhandlers.News;
-import com.samples.pooja.cityapp.webhandlers.NewsDetail;
+import com.samples.pooja.cityapp.datamodels.NewsDetail;
 
 import java.util.HashMap;
 
@@ -85,6 +82,18 @@ public class DetailPageActivity extends AppCompatActivity implements NewsDetailF
             // Otherwise, select the previous page.
             mViewPager.setCurrentItem(mViewPager.getCurrentItem() - 1);
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == android.R.id.home){
+            //Send result back to list activity
+            Intent returnIntent = getIntent();
+            setResult(RESULT_CANCELED, returnIntent);
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

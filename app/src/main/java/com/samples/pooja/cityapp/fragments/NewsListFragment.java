@@ -3,7 +3,6 @@ package com.samples.pooja.cityapp.fragments;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +15,7 @@ import com.samples.pooja.cityapp.R;
 import com.samples.pooja.cityapp.activities.NewsListActivity;
 import com.samples.pooja.cityapp.adapters.NewsListAdapter;
 import com.samples.pooja.cityapp.utilities.NewsPageConstants;
-import com.samples.pooja.cityapp.webhandlers.News;
+import com.samples.pooja.cityapp.datamodels.News;
 
 /**
  * This fragment displays the news feed and is reused for every tab.
@@ -59,11 +58,22 @@ public class NewsListFragment extends ListFragment {
         mNewsListActivity.onNewsListStartDownload(sNewsUrl);
     }
 
+    /**
+     * Actions to do when language is changed
+     * @param position tab position to determine news type
+     * @param langCode code for current language
+     */
     public void onLanguageChanged(int position, int langCode){
         mForceRefresh = true;
         loadData(position, langCode);
     }
 
+    /**
+     * Get the url for the API
+     * @param langCode code for current language
+     * @param mNewsLocation code for news type national or city
+     * @return url for api call
+     */
     private String getNewsUrl(int langCode, int mNewsLocation) {
         String sUrl;
         if(langCode == NewsPageConstants.LANG_CODE_EN) {
@@ -82,6 +92,11 @@ public class NewsListFragment extends ListFragment {
         return sUrl;
     }
 
+    /**
+     * Get the news type national or city
+     * @param position current selected tab position
+     * @return code representing national or city news
+     */
     private int getNewsType(int position){
         int newsType;
         switch(position) {
@@ -98,22 +113,31 @@ public class NewsListFragment extends ListFragment {
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        //TO DO - Form url for detail page and find the current tab and pass to below line of code
         mNewsListActivity.onNewsItemSelected(position, null, NewsPageConstants.LOC_CODE_NATIONAL);
     }
 
+    /**
+     * Called when download of API is completed by activity and result is success
+     * @param result data model containing news
+     */
     public void onDownloadComplete(News result) {
         mForceRefresh = false;
         mNewsListAdapter = new NewsListAdapter(mNewsListActivity, result.getNewsListItems());
         setListAdapter(mNewsListAdapter);
     }
 
+    /**
+     * Called when download of data is complete and has error
+     * @param exception exception to display to user
+     */
     public void onDownloadError(Exception exception) {
         mForceRefresh = false;
         //Create error text based on exception
         //Load empty view text with the error text
         Toast.makeText(mNewsListActivity, exception.getMessage(), Toast.LENGTH_LONG).show();//Need to make better texts and dialogs
-        TextView emptyTxtView = (TextView)getView().findViewById(android.R.id.empty);
-        emptyTxtView.setText(exception.getMessage());
+        if(getView() != null) {
+            TextView emptyTxtView = (TextView) getView().findViewById(android.R.id.empty);
+            emptyTxtView.setText(exception.getMessage());
+        }
     }
 }

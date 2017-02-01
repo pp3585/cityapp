@@ -12,7 +12,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -24,7 +23,7 @@ import com.samples.pooja.cityapp.listeners.NewsListFragmentChangesListener;
 import com.samples.pooja.cityapp.utilities.NewsPageConstants;
 import com.samples.pooja.cityapp.webhandlers.DownloadCallback;
 import com.samples.pooja.cityapp.webhandlers.DownloadTask;
-import com.samples.pooja.cityapp.webhandlers.News;
+import com.samples.pooja.cityapp.datamodels.News;
 
 /*
 * This activity displays the news list with tabs for national and city news.
@@ -122,6 +121,9 @@ public class NewsListActivity extends AppCompatActivity implements NewsListFragm
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Actions to do when language is changed by user
+     */
     private void doLanguageSwitch() {
         saveNewLanguage();
         invalidateOptionsMenu();
@@ -129,6 +131,9 @@ public class NewsListActivity extends AppCompatActivity implements NewsListFragm
         notifyLanguageChanged();
     }
 
+    /**
+     * Set tab titles based on position
+     */
     private void changeTabTitles() {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         TabLayout.Tab tabNational = tabLayout.getTabAt(0);
@@ -141,6 +146,11 @@ public class NewsListActivity extends AppCompatActivity implements NewsListFragm
         }
     }
 
+    /**
+     * Get tab name based on current position and current language
+     * @param tabPosition position of current selected tab
+     * @return name for the tab at provided position
+     */
     private String getTabName(int tabPosition) {
         String tabTitle = "";
         int langCode = getLanguageCode();
@@ -166,6 +176,9 @@ public class NewsListActivity extends AppCompatActivity implements NewsListFragm
         return tabTitle;
     }
 
+    /**
+     * Gets current language, switches it and saves the new language
+     */
     private void saveNewLanguage() {
         //Get current language.
         int langCode = getLanguageCode();
@@ -189,21 +202,13 @@ public class NewsListActivity extends AppCompatActivity implements NewsListFragm
         }
     }
 
+    /**
+     * Get language code from shared preferences
+     * @return language code
+     */
     public int getLanguageCode() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         return sharedPref.getInt(getString(R.string.key_current_language_code), NewsPageConstants.LANG_CODE_EN);
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        Log.i("CITY_INFO", "onSaveInstance");
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        Log.i("CITY_INFO", "onRestore");
-        super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
@@ -214,12 +219,20 @@ public class NewsListActivity extends AppCompatActivity implements NewsListFragm
 
     @Override
     public void onNewsItemSelected(int position, String sDetailUrl, int newsType) {
+        saveCurrentState();
         //Call detail screen
         Intent intent = new Intent(this, DetailPageActivity.class);
         intent.putExtra(NewsPageConstants.KEY_SELECTED_POSITION, position);
-        startActivity(intent);
+        startActivityForResult(intent, NewsPageConstants.REQUEST_CODE_DETAIL_ACTIVITY);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == NewsPageConstants.REQUEST_CODE_DETAIL_ACTIVITY && resultCode == RESULT_CANCELED){
+            restoreCurrentState();
+        }
+    }
 
     @Override
     public void onNewsListRefresh(String sWebUrl, int newsType) {
@@ -240,19 +253,9 @@ public class NewsListActivity extends AppCompatActivity implements NewsListFragm
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.i("CITY_INFO", "ondestroy");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.i("CITY_INFO", "onPause");
-        saveCurrentState();
-    }
-
+    /**
+     * Saves current language and current selected tab to shared preferences
+     */
     private void saveCurrentState() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = sharedPref.edit();
@@ -263,13 +266,9 @@ public class NewsListActivity extends AppCompatActivity implements NewsListFragm
         editor.apply();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.i("CITY_INFO", "onResume");
-        restoreCurrentState();
-    }
-
+    /**
+     * Gets last selected tab and language from shared preferences
+     */
     private void restoreCurrentState() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         //Get last selected tab
@@ -285,7 +284,6 @@ public class NewsListActivity extends AppCompatActivity implements NewsListFragm
             @Override
             public void run() {
                 mViewPager.setCurrentItem(position);
-                //onFragmentSelected(position);
                 notifyLanguageChanged();
             }
         });
@@ -293,11 +291,11 @@ public class NewsListActivity extends AppCompatActivity implements NewsListFragm
 
     @Override
     public void onFragmentReady() {
-        //onFragmentSelected(0);
+
     }
 
     /*
-     * Updates UI based on result of download.
+     * Updates UI based on result of download of data.
      */
     @Override
     public void updateFromDownload(Object result) {

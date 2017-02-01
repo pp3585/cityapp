@@ -1,5 +1,8 @@
 package com.samples.pooja.cityapp.webhandlers;
 
+import com.samples.pooja.cityapp.datamodels.News;
+import com.samples.pooja.cityapp.datamodels.NewsItem;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -7,7 +10,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Parser class for news

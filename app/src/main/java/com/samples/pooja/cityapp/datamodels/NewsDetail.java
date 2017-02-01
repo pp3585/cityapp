@@ -1,4 +1,4 @@
-package com.samples.pooja.cityapp.webhandlers;
+package com.samples.pooja.cityapp.datamodels;
 
 /**
  * Data model for news details page

@@ -1,7 +1,4 @@
-package com.samples.pooja.cityapp.webhandlers;
-
-import android.os.Parcel;
-import android.os.Parcelable;
+package com.samples.pooja.cityapp.datamodels;
 
 import java.util.HashMap;
 import java.util.List;

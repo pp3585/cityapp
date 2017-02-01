@@ -56,7 +56,6 @@ public class NetworkFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //mUrlString = getArguments().getString(URL_KEY);
         // Retain this Fragment across configuration changes in the host Activity.
         setRetainInstance(true);
     }

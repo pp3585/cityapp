@@ -1,4 +1,4 @@
-package com.samples.pooja.cityapp.webhandlers;
+package com.samples.pooja.cityapp.datamodels;
 
 /**
  * Model object for a news item.

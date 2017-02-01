@@ -2,6 +2,9 @@ package com.samples.pooja.cityapp.webhandlers;
 
 import android.util.Xml;
 
+import com.samples.pooja.cityapp.datamodels.News;
+import com.samples.pooja.cityapp.datamodels.NewsItem;
+
 import org.json.JSONException;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;

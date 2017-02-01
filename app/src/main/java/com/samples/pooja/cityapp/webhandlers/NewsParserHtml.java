@@ -1,13 +1,10 @@
 package com.samples.pooja.cityapp.webhandlers;
 
-import android.util.Log;
-
-import com.samples.pooja.cityapp.utilities.NewsPageConstants;
+import com.samples.pooja.cityapp.datamodels.NewsDetail;
 
 import org.json.JSONException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;

@@ -1,6 +1,7 @@
 package com.samples.pooja.cityapp.adapters;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.samples.pooja.cityapp.R;
-import com.samples.pooja.cityapp.webhandlers.NewsItem;
+import com.samples.pooja.cityapp.datamodels.NewsItem;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -30,8 +31,9 @@ public class NewsListAdapter extends ArrayAdapter<NewsItem> {
         ImageView img;
     }
 
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         ViewHolder viewHolder; // view lookup cache stored in tag
         // Check if an existing view is being reused, otherwise inflate the view
         if (convertView == null) {
